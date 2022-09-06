@@ -1,16 +1,13 @@
-from django.shortcuts import render
+
 from django.http import JsonResponse
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from django.views.generic import UpdateView
 from ads.models import Category, Ad
-from django.shortcuts import get_object_or_404
 from ads.serializers import *
-from users.models import User
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
-import json
-from hw27 import settings
+from rest_framework.permissions import IsAuthenticated
+from ads.permissions import SelectionUpdateAndDeletePermission, AdminOrModeratorOrAuthor
 
 # Create your views here.
 def index(request):
@@ -45,6 +42,7 @@ class CategoryDeleteView(DestroyAPIView):
 
     queryset = Category.objects.all()
     serializer_class = CategoryDestroySerializer
+
 
 
 class AdListView(ListAPIView):
@@ -82,24 +80,26 @@ class AdDetailView(RetrieveAPIView):
 
     queryset = Ad.objects.all()
     serializer_class = AdDetailSerializer
-
+    permission_classes = [IsAuthenticated]
 
 class AdCreateView(CreateAPIView):
 
     queryset = Ad.objects.all()
     serializer_class = AdCreateSerializer
-
+    permission_classes = [IsAuthenticated]
 
 class AdUpdateView(UpdateAPIView):
 
     queryset = Ad.objects.all()
     serializer_class = AdUpdateSerializer
+    permission_classes = [AdminOrModeratorOrAuthor]
 
 
 class AdDeleteView(DestroyAPIView):
 
     queryset = Ad.objects.all()
     serializer_class = AdDestroySerializer
+    permission_classes = [AdminOrModeratorOrAuthor]
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -124,3 +124,29 @@ class AdImageView(UpdateView):
 			'category': ad.category.name,
 		}, safe=False)
         
+class SelectionListView(ListAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionListSerializer
+
+class SelectionDetailView(RetrieveAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+class SelectionCreateView(CreateAPIView):
+
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+class SelectionUpdateView(UpdateAPIView):
+
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateSerializer
+    permission_classes = [SelectionUpdateAndDeletePermission]
+
+class SelectionDeleteView(DestroyAPIView):
+
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateSerializer
+    permission_classes = [SelectionUpdateAndDeletePermission]

@@ -1,6 +1,8 @@
+from sre_constants import SRE_FLAG_DEBUG
 from rest_framework import serializers
-from ads.models import Ad, Category
+from ads.models import Ad, Category, Selection
 from users.models import User
+
 
 class AdListSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(read_only=True, slug_field='name')
@@ -86,6 +88,30 @@ class AdDestroySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ad
+        fields = '__all__'
+
+
+class SelectionDetailSerializer(serializers.ModelSerializer):
+
+    items = AdDetailSerializer(many=True)
+
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='username')
+
+    class Meta:
+        model = Selection
+        fields = '__all__'
+
+
+class SelectionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Selection
+        fields = ['id', 'name']
+
+
+class SelectionCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Selection
         fields = '__all__'
 
 

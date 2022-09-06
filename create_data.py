@@ -1,7 +1,7 @@
 
 from ads.models import Category
 import json
-with open("category.json", 'r', encoding='utf-8') as f:
+with open("data/category.json", 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 for cat in data:
@@ -13,7 +13,7 @@ for cat in data:
 from users.models import Location
 import json
 
-with open("location.json", "r", encoding="utf-8") as f:
+with open("data/location.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
 for loc in data:
@@ -25,7 +25,7 @@ for loc in data:
 from users.models import User
 import json
 
-with open("user.json", "r", encoding="utf-8") as f:
+with open("data/user.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
 for user in data:
@@ -37,7 +37,7 @@ for user in data:
 from ads.models import Ad
 import json
 
-with open("ad.json", 'r', encoding='utf-8') as f:
+with open("data/ad.json", 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 for ad in data:
