@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import date
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Location(models.Model):
@@ -16,14 +18,23 @@ class Location(models.Model):
         verbose_name_plural = "Местоположения"
         ordering = ['name']
 
+def DateValidator(value: date):
+    if date.today().year - value.year < 9:
+        raise ValidationError(
+            'Your age must be over 9 years old.',
+            params = {'year': value.year}
+        )
+
+
+
 class User(AbstractUser):
     MEMBER = 'member'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     ROLE = [(MEMBER, 'Пользователь'), (ADMIN, 'Админ'), (MODERATOR, 'Модератор')]
 
-
     age = models.PositiveIntegerField(null=True)
+    birth_date = models.DateField(validators=[DateValidator], null=True)
     role = models.CharField(max_length=25, choices=ROLE, default=MEMBER)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, default=None, null=True)
 

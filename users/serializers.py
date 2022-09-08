@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from users.models import User, Location
+from django.core.exceptions import ValidationError
+from rest_framework.validators import UniqueValidator
+from datetime import date
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,6 +25,12 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = User
         exclude = ['password']
 
+def EmailValidator(value: str):
+    if 'rambler' in value.split('@')[1]:
+        raise ValidationError(
+            'Invalid email address.',
+            params = {'value': value}
+        )
 
 class UserCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
@@ -29,6 +38,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         required=False,
         slug_field='name',
         queryset=Location.objects.all())
+
+    email = serializers.CharField(max_length=50, validators=[UniqueValidator(queryset=User.objects.all()), EmailValidator])
 
     class Meta:
         model = User
@@ -42,6 +53,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
         user = super().create(validated_data)
         user.set_password(user.password)
+        user.age = date.today().year - user.birth_date.year
         user.save()
         
         if self._location:
