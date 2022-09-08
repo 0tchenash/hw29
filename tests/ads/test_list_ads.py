@@ -4,7 +4,7 @@ from tests.factories import AdFactory
 
 
 @pytest.mark.django_db
-def test_ads_list(client, user):
+def test_ads_list(client):
     ads_factories = AdFactory.create_batch(10)
 
     response = client.get("/ads/?page=1")
